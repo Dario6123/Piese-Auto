@@ -24,3 +24,32 @@ window.onscroll = function() {
 scrollTopBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+
+// --------------------
+// Coș Produse
+// --------------------
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+// Funcție pentru actualizarea numărului din coș (header)
+function updateCartCount() {
+  const cartCount = document.getElementById("cart-count");
+  if(cartCount) cartCount.innerText = cart.length;
+}
+
+// Adaugă produse în coș la click
+document.querySelectorAll(".produs button").forEach(button => {
+  button.addEventListener("click", function () {
+    const produs = this.closest(".produs");
+    const name = produs.querySelector("h3").innerText;
+    const price = parseFloat(produs.querySelector("p").innerText.replace(/[^0-9]/g,''));
+
+    cart.push({ name, price });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    alert(`${name} a fost adăugat în coș ✅`);
+  });
+});
+
+// Actualizare inițială count coș
+updateCartCount();

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coșul tău | Piese-Auto</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo"><img src="images/logo.png" alt="Piese-Auto Logo"></div>
+
+  <nav class="navbar">
+    <a href="index.html">Produse</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="cart-icon">
+    🛒 Coș: <span id="cart-count">0</span>
+    <a href="index.html" style="color:white; font-weight:bold;">Înapoi la produse</a>
+  </div>
+
+  <button id="modeToggle" class="mode-btn">🌙 Night Mode</button>
+</header>
+
+<main>
+  <h2>Produsele tale în coș</h2>
+
+  <table id="cartTable">
+    <thead>
+      <tr>
+        <th>Produs</th>
+        <th>Preț</th>
+        <th>Acțiune</th>
+      </tr>
+    </thead>
+    <tbody id="cartBody"></tbody>
+  </table>
+
+  <h3>Total: <span id="totalPrice">0</span> RON</h3>
+  <button id="clearCart">Golește coșul</button>
+
+  <h2>Finalizează comanda</h2>
+  <form action="trimite_comanda.php" method="POST">
+    <input type="text" name="nume" placeholder="Numele tău" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="text" name="telefon" placeholder="Număr de telefon" required>
+    <textarea name="mesaj" placeholder="Observații comandă" required></textarea>
+    <input type="hidden" name="cartData" id="cartData">
+    <button type="submit">Trimite comanda ✅</button>
+  </form>
+</main>
+
+<script src="script.js"></script>
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function updateCartCount() {
+  const cartCount = document.getElementById("cart-count");
+  if(cartCount) cartCount.innerText = cart.length;
+}
+
+function renderCart() {
+  const cartBody = document.getElementById("cartBody");
+  const totalPrice = document.getElementById("totalPrice");
+  const cartDataField = document.getElementById("cartData");
+
+  cartBody.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price;
+    cartBody.innerHTML += `
+      <tr>
+        <td>${item.name}</td>
+        <td>${item.price} RON</td>
+        <td><button onclick="deleteItem(${index})">Șterge</button></td>
+      </tr>
+    `;
+  });
+
+  totalPrice.innerText = total;
+  cartDataField.value = JSON.stringify(cart);
+  updateCartCount();
+}
+
+function deleteItem(idx) {
+  cart.splice(idx, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+document.getElementById("clearCart").addEventListener("click", () => {
+  localStorage.removeItem("cart");
+  cart = [];
+  renderCart();
+});
+
+// Initializare
+renderCart();
+updateCartCount();
+</script>
+
+</body>
+</html>
